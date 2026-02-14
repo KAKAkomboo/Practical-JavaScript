@@ -31,14 +31,14 @@ const totalInValue = document.getElementById("totalInValue");
 const totalOutValue = document.getElementById("totalOutValue");
 const filterAllBtn = document.getElementById("filterAllBtn");
 const filterInBtn = document.getElementById("filterInBtn");
-const filterOutBtn = document.getElementById("FilterOutBtn");
+const filterOutBtn = document.getElementById("FilterOut");
 
 
 // 3) ДОПОМІЖНІ ФУНКЦІЇ
 // TODO 2 — showError(text): встановити текст помилки в елемент errorText (textContent).
 function showError(text) {
     if (!errorText) return;
-    // Допишіть: errorText.textContent = ...
+        errorText.textContent = text
 }
 
 // Форматуємо число як гроші з 2 знаками після коми
@@ -62,14 +62,14 @@ function readAmount(inputEl) {
 
 // TODO 3 — makeId(): повернути унікальний id (наприклад String(Date.now())).
 function makeId() {
-    // Допишіть: return ...
+    return String(Date.now());
 }
 
 
 // 4) localStorage
 // TODO 4 — save(): зберегти account у localStorage під ключем "account".
 function save() {
-    // Допишіть: localStorage.setItem...
+    localStorage.setItem.setItem("account", JSON.stringify(account))
 }
 
 // Завантажити account з localStorage
@@ -98,7 +98,12 @@ function calcTotals() {
     let totalOut = 0;
     account.transactions.forEach(t => {
         const amount = Number(t.amount) || 0;
-        // Допишіть 2 перевірки: if ( ... ) total... += ...;
+        if (t.type === "deposit") {
+            totalIn += amount;
+        }
+        if (t.type === "withdraw") {
+            totalOut += amount
+        }
     });
     return {
         totalIn: Math.round(totalIn * 100) / 100,
