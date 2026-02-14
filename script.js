@@ -19,19 +19,19 @@ let activeFilter = "all";
 // 2) ЕЛЕМЕНТИ СТОРІНКИ (DOM)
 // TODO 1: Отримайте елементи за їх id через document.getElementById("id"). Один приклад нижче.
 const balanceValue = document.getElementById("balanceValue");
-const depositInput = null;   // getElementById("depositInput")
-const withdrawInput = null;
-const depositBtn = null;
-const withdrawBtn = null;
-const transactionsList = null;
-const emptyState = null;
-const errorText = null;
-const clearBtn = null;
-const totalInValue = null;
-const totalOutValue = null;
-const filterAllBtn = null;
-const filterInBtn = null;
-const filterOutBtn = null;
+const depositInput = document.getElementById("depositInput");
+const withdrawInput = document.getElementById("withdrawInput");
+const depositBtn = document.getElementById("depositBtn");
+const withdrawBtn = document.getElementById("withdrawBtn");
+const transactionsList = document.getElementById("transactionsList");
+const emptyState = document.getElementById("emptyState");
+const errorText = document.getElementById("errorText");
+const clearBtn = document.getElementById("clearBtn");
+const totalInValue = document.getElementById("totalInValue");
+const totalOutValue = document.getElementById("totalOutValue");
+const filterAllBtn = document.getElementById("filterAllBtn");
+const filterInBtn = document.getElementById("filterInBtn");
+const filterOutBtn = document.getElementById("FilterOutBtn");
 
 
 // 3) ДОПОМІЖНІ ФУНКЦІЇ
