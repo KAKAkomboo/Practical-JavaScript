@@ -29,9 +29,9 @@ const errorText = document.getElementById("errorText");
 const clearBtn = document.getElementById("clearBtn");
 const totalInValue = document.getElementById("totalInValue");
 const totalOutValue = document.getElementById("totalOutValue");
-const filterAllBtn = document.getElementById("filterAllBtn");
-const filterInBtn = document.getElementById("filterInBtn");
-const filterOutBtn = document.getElementById("FilterOut");
+const filterAllBtn = document.getElementById("filterAll");
+const filterInBtn = document.getElementById("filterIn");
+const filterOutBtn = document.getElementById("filterOut");
 
 
 // 3) ДОПОМІЖНІ ФУНКЦІЇ
@@ -69,7 +69,7 @@ function makeId() {
 // 4) localStorage
 // TODO 4 — save(): зберегти account у localStorage під ключем "account".
 function save() {
-    localStorage.setItem.setItem("account", JSON.stringify(account))
+    localStorage.setItem("account", JSON.stringify(account))
 }
 
 // Завантажити account з localStorage
@@ -98,12 +98,8 @@ function calcTotals() {
     let totalOut = 0;
     account.transactions.forEach(t => {
         const amount = Number(t.amount) || 0;
-        if (t.type === "deposit") {
-            totalIn += amount;
-        }
-        if (t.type === "withdraw") {
-            totalOut += amount
-        }
+        if (t.type === "deposit") totalIn += amount;
+        if (t.type === "withdraw") totalOut += amount
     });
     return {
         totalIn: Math.round(totalIn * 100) / 100,
@@ -116,7 +112,8 @@ function calcTotals() {
 function renderTotals() {
     const totals = calcTotals();
     if (totalInValue) totalInValue.textContent = formatMoney(totals.totalIn);
-    // Допишіть: аналогічно для totalOutValue та totals.totalOut
+    if (totalOutValue) totalOutValue.textContent = formatMoney(totals.totalOut);
+
 }
 
 
@@ -125,24 +122,24 @@ function renderTotals() {
 // 1) перевірку — якщо activeFilter === "all", повернути account.transactions; 
 // 2) інакше повернути результат filter (за типом t.type === activeFilter).
 function getVisibleTransactions() {
-    // Допишіть умову по які мають повертатись усі транзакції: if ( ... ) return account.transactions;
+    if (activeFilter === "all") return account.transactions
     
-    return account.transactions./* тут пропущене ключове слово для фільтрації, допишіть його */(t => t.type === activeFilter);
+    return account.transactions.filter(t => t.type === activeFilter);
 }
 
 // TODO 8 — updateFilterButtons(): допишіть у лапках ключові слова — classList і toggle
 // element.classList.toggle("клас", умова) — додає або знімає клас за умови.
 function updateFilterButtons() {
     if (filterAllBtn) {
-        filterAllBtn.classList./* допишіть ключове слово для зміни класу */("is-active", activeFilter === "all");
+        filterAllBtn.classList.toggle("is-active", activeFilter === "all");
         filterAllBtn.setAttribute("aria-selected", String(activeFilter === "all"));
     }
     if (filterInBtn) {
-        filterInBtn./* допишіть ключове слово для додавання класу */.toggle("is-active", activeFilter === "deposit");
+        filterInBtn.classList.toggle("is-active", activeFilter === "deposit");
         filterInBtn.setAttribute("aria-selected", String(activeFilter === "deposit"));
     }
     if (filterOutBtn) {
-        filterOutBtn./* допишіть ключові слова для зміни класу */("is-active", activeFilter === "withdraw");
+        filterOutBtn.classList.toggle("is-active", activeFilter === "withdraw");
         filterOutBtn.setAttribute("aria-selected", String(activeFilter === "withdraw"));
     }
 }
@@ -217,12 +214,13 @@ function render() {
     if (transactionsList) {
         transactionsList.innerHTML = "";
         visible.forEach(t => {
-            // Допишіть: transactionsList.appendChild( використайте функцію для створення елементу транзакції);
+            transactionsList.appendChild(createTransactionItem(t));
         });
     }
 
     // Оновлюємо статистику (Total deposits / Total withdrawals)
     // TODO 10 — використайте функцію для оновлення Totals на сторінці (виклик по імені).
+    renderTotals();
 }
 
 
@@ -237,11 +235,11 @@ function addTransaction(type, amount) {
     };
 
     // Додаємо в початок, щоб нові були зверху
-    account.transactions./* допишіть ключове слово для додавання транзакції в початок */(tx);
+    account.transactions.unshift(tx);
 
     // Оновлюємо баланс
     if (type === "deposit") account.balance += amount;
-    // Допишіть: аналогічно для withdraw
+    if (type === "withdraw") account.balance -= amount;
     
 
     // Зберігаємо і оновлюємо інтерфейс
@@ -253,12 +251,12 @@ function addTransaction(type, amount) {
 // 8) ПОДІЇ (модуль: addEventListener, click)
 // TODO 12 — Обробник "Add": допишіть ключове слово для додавання події, та функцію повернення помилки з текстом "Enter a valid amount greater than 0"
 if (depositBtn) {
-    depositBtn./* допишіть ключове слово для додавання події */("click", () => {
+    depositBtn.addEventListener("click", () => {
         showError("");
 
         const amount = readAmount(depositInput);
         if (amount === null) {
-            // Допишіть: функцію повернення помилки з текстом "Enter a valid amount greater than 0"
+            showError("Enter a valid amount greater than 0")
             return;
         }
 
@@ -273,16 +271,16 @@ if (withdrawBtn) {
         showError("");
         const amount = readAmount(withdrawInput);
         if (amount === null) {
-            // Допишіть: функцію повернення помилки з текстом "Enter a valid amount greater than 0"
+            showError("Enter a valid amount greater than 0")
             return;
         }
 
         if (amount > account.balance) {
-            // Допишіть: функцію повернення помилки з текстом "Not enough balance"
+            showError("Not enough balance")
             return;
         }
 
-        /* Допишіть: виклик функції для додавання транзакції */("withdraw", amount);
+        addTransaction("withdraw", amount);
         withdrawInput.value = "";
     });
 }
@@ -307,3 +305,5 @@ if (filterOutBtn) filterOutBtn.addEventListener("click", () => setFilter("withdr
 // 1) Завантажуємо дані
 // 2) Ставимо фільтр "all" і малюємо все
 // TODO 14 — допишіть виклики функцій
+load()
+setFilter("all")
